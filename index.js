@@ -3,7 +3,7 @@ const path = require('path');
 
 const adminRouters = require('./routes/admin');
 const shopRouters = require('./routes/shop');
-const db = require('./util/database')
+const mongoConnect = require('./util/database').mongoConnect
 
 //--------------------Setups--------------------
 const app = express();
@@ -21,11 +21,6 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/admin',adminRouters);
 app.use(shopRouters);
 
-//testing code
-// db.execute('SELECT * FROM products').then((result) => {
-//     console.log(result[0])
-// }).catch(err => console.log(err))
-
 // catch all middleware
 app.use((req,res,next)=>{
     res.render('404', {
@@ -33,5 +28,7 @@ app.use((req,res,next)=>{
     });
 });
 //----------------End of Middleware-----------------
+mongoConnect(()=> {
+    app.listen(5000, () => console.log("Server connected to databse"));
+})
 
-app.listen(5000);
